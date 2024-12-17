@@ -1,6 +1,7 @@
 {% if not user_authorized %}
-    <p><a href="/user/auth/">Вход в систему</a></p>
+    <div class="col-md-3 text-end">
+        <a href="/user/login/" class="btn btn-primary">Войти</a>
+    </div>
 {% else %}
-    <p>Добро пожаловать на сайт, {{ user_name }} {{ user_lastname }}!</p>
-<p><a href="/user/logout/">Выйти из системы</a></p>
+    <p>Добро пожаловать на сайт!</p>
 {% endif %}

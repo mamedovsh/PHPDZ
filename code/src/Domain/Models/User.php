@@ -7,7 +7,7 @@ use Geekbrains\Application1\Infrastructure\Storage;
 
 class User {
 
-    private ?int $idUser;
+    private ?int $userId;
     private ?string $userName;
 
     private ?string $userLastName;
@@ -46,7 +46,7 @@ class User {
 
 
     public function getUserId(): string {
-        return $this->idUser;
+        return $this->userId;
     }
 
     public function getUserLastName(): string {
@@ -61,8 +61,12 @@ class User {
         $this->userBirthday = strtotime($birthdayString);
     }
 
-    public static function getAllUsersFromStorage(): array {
+    public static function getAllUsersFromStorage(?int $limit = null): array {
         $sql = "SELECT * FROM users";
+
+        if(isset($limit) && $limit > 0) {
+            $sql .= " WHERE id_user > " .(int)$limit;
+        }
 
         $handler = Application::$storage->get()->prepare($sql);
         $handler->execute();
@@ -71,13 +75,12 @@ class User {
         $users = [];
 
         foreach($result as $item){
-            $user = new User($item['id_user'],$item['login'], $item['user_name'], $item['user_lastname'], $item['user_birthday_timestamp']);
+            $user = new User($item['id_user'], $item['user_name'], $item['user_lastname'], $item['user_birthday_timestamp']);
             $users[] = $user;
         }
         
         return $users;
     }
-
     public static function validateRequestData() : void {
         if (isset($_POST['login']) && empty($_POST['login'])) {
             throw new \Exception("Логин пользователя не должен быть пустым");
@@ -217,4 +220,16 @@ class User {
         ]);
 
     }
+    public function getUserDataAsArray(): array {
+        $userArray = [
+            'id' => $this->userId,
+            'username' => $this->userName, 
+            'userlastname' => $this->userLastName,
+            'userbirthday' => date('d.m.Y', $this->userBirthday)
+        ];
+
+        return $userArray;
+    }
 }
+
+

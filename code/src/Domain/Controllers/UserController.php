@@ -40,6 +40,25 @@ class UserController extends AbstractController {
         }
     }
 
+    public function actionIndexRefresh(){
+        $limit = null;
+        
+        if(isset($_POST['maxId']) && ($_POST['maxId'] > 0)){
+            $limit = $_POST['maxId'];
+        }
+
+        $users = User::getAllUsersFromStorage($limit);
+        $usersData = [];
+
+        if(count($users) > 0) {
+            foreach($users as $user){
+                $usersData[] = $user->getUserDataAsArray();
+            }
+        }
+
+        return json_encode($usersData);
+    }
+
     public function actionSave(): string {
         if(User::validateRequestData()) {
             $user = new User();
